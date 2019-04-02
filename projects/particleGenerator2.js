@@ -2,68 +2,65 @@ let ps;
 
 function setup() {
     createCanvas(640, 360);
-    ps = new ParticleSystem(new p5.Vector(width/2, 50));
+    ps = new ParticleSystem(createVector(width/2, 50));
 }
 
 function draw() {
-    background(0);
+    background(51);
     ps.addParticle();
     ps.run();
 }
 
 class Particle {
-    constructor(lvector){
-        this.location = lvector;
-        this.acceleration = new p5.Vector(0,0.05);
-
-        let random1 = Math.random() * ((Math.random() > 0.5)? -1: 1);
-        let random2 = Math.random() - ((Math.random() > 0.5) ? 1 : 2);
-
-        this.velocity = new p5.Vector(random1, random2);
-
+    constructor(position) {
+        this.position = position.copy();
+        this.acceleration = createVector(0,0.05);
+        this.velocity = createVector(random(-1,1), random(-1,0));
         this.lifespan = 255.0;
     }
 
-    run = () => {
+    run(){
         this.update();
         this.display();
     }
 
-    update = () => {
+    update(){
         this.velocity.add(this.acceleration);
-        this.location.add(this.velocity);
+        this.position.add(this.velocity);
         this.lifespan -= 1.0;
     }
 
-    display = () => {
+    display(){
         stroke(255, this.lifespan);
-        FileList(255,this.lifepsna);
-        ellipse(this.location.x, this.location.y, 8 ,8);
+        fill(255,this.lifespan);
+        ellipse(this.position.x, this.position.y, 8 ,8);
     }
 
-    isDead = () => {
+    isDead(){
+        if(this.lifespan < 0){
+            return true;
+        }
         return(this.lifespan < 0);
     }
 }
 
-class ParticleSystem extends Particle {
-    constructor(lvector){
-        super(lvector);
-        this.origin = location;
+class ParticleSystem{
+    constructor(location){
+        this.origin = location.copy();
         this.particles = [];
     }
 
-    addParticle = () => {
+    addParticle() {
         this.particles.push(new Particle(this.origin));
     }
 
-    run = () => {
+    run(){
         let p;
-        for (var i = this.particles.length -1; i >= 0; i--){
+        for (var i = this.particles.length - 1; i >= 0; i--){
             p = this.particles[i];
             p.run();
             if(p.isDead()){
-                this.paticles.splice(i,1);
+                this.particles.splice(i,1);
             }
         }
     }
